@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -27,51 +26,46 @@
 import * as amplitude from 'https://cdn.amplitude.com/libs/analytics-browser-2.3.3-min.esm.gz.js';
 
 const AMP_KEY = '8d3b5be866c4740fa6c83949f85ce25e';
+const LP_ID   = 'seisaku-v1';
 amplitude.init(AMP_KEY, { defaultTracking: true });
 
-// ── ページビュー
-amplitude.track('page_view', {
-  page: location.pathname,
-  referrer: document.referrer || 'direct',
-});
+// ── ページビュー（§2-2: lp 必須）
+amplitude.track('page_view', { lp: LP_ID });
 
 // ── FCBボタン計測（フローティングバー）
 document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.fcb-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const method = btn.querySelector('.fcb-main')?.textContent?.trim() || '';
-      amplitude.track('fcb_click', { method, page: location.pathname });
+      amplitude.track('fcb_click', { method, lp: LP_ID });
     });
   });
 
-  // ── AI診断ボタン
+  // ── AI診断ボタン（§2-2: lp 必須）
   document.querySelectorAll('a[href*="diagnosis"]').forEach(el => {
     el.addEventListener('click', () => {
-      amplitude.track('diagnosis_click', { page: location.pathname });
+      amplitude.track('diagnosis_click', { lp: LP_ID });
     });
   });
 
   // ── 銀行格付シミュレーション
   document.querySelectorAll('a[href*="finance.seisakukinyukouko"]').forEach(el => {
     el.addEventListener('click', () => {
-      amplitude.track('finance_sim_click', { page: location.pathname });
+      amplitude.track('finance_sim_click', { lp: LP_ID });
     });
   });
 
   // ── LINEボタン
   document.querySelectorAll('a[href*="lin.ee"]').forEach(el => {
     el.addEventListener('click', () => {
-      amplitude.track('line_click', { page: location.pathname });
+      amplitude.track('line_click', { lp: LP_ID });
     });
   });
 
   // ── コラムリンク
   document.querySelectorAll('a[href*="/column/"]').forEach(el => {
     el.addEventListener('click', () => {
-      amplitude.track('column_click', {
-        column: el.href,
-        page: location.pathname,
-      });
+      amplitude.track('column_click', { column: el.href, lp: LP_ID });
     });
   });
 });
