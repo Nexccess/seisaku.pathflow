@@ -113,10 +113,20 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const { answers } = req.body;
+    // diagnosis.html は複合ペイロード形式で送信するため、answers配列を動的に構築する
+    const body = req.body;
+    let answers = body.answers;
 
-    if (!Array.isArray(answers) || answers.length < 5) {
-      return res.status(400).json({ error: 'answers must be an array of 5 items' });
+    if (!Array.isArray(answers) || answers.length < 1) {
+      // diagnosis.html の複合ペイロードから5問分の回答を組み立てる
+      const allAns = body.all_answers || {};
+      answers = [
+        body.industry          || allAns['業種 / 業界']                || '未回答',
+        (Array.isArray(body.challenges) ? body.challenges.join('、') : body.challenges) || '未回答',
+        body.monthly_inquiries || allAns['月間の問い合わせ・見込み客数'] || '未回答',
+        body.goals             || allAns['導入で実現したいこと']        || '未回答',
+        body.budget_timing     || allAns['導入検討時期・予算感']        || '未回答',
+      ];
     }
 
     const prompt = buildPrompt(answers);
